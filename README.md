@@ -6,8 +6,8 @@ This project is for learning purposes.
 Please note that it is not designed to be implemented as-is in games, etc. 
 
 ## .Assets/AkBoneDynamics/
-|Script||
-|---|---|
+|Script|Description|
+|:---|:---|
 |AkBoneDynamics.cs|Main|
 |AkBDSphereCollider.cs|Sphere Collider|
 |AkBDCapsuleCollider.cs|Capsule Collider|
