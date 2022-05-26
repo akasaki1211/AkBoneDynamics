@@ -6,10 +6,10 @@ This project is for learning purposes.
 Please note that it is not designed to be implemented as-is in games, etc. 
 
 ## .Assets/AkBoneDynamics/
-|Script|Description|
-|:---|:---|
-|AkBoneDynamics.cs|Main|
-|AkBDSphereCollider.cs|Sphere Collider|
-|AkBDCapsuleCollider.cs|Capsule Collider|
-|AkBDPlaneCollider.cs|Infinite Plane Collider|
-|AkBDCollider.cs|Base class for all colliders|
+|Script|Category|Description|
+|---|---|---|
+|**AkBoneDynamics.cs**|Core|One is required per bone group.<br>Can be attached to any GameObject.|
+|**AkBDSphereCollider.cs**|Collider|Sphere Collider.<br>Attach to GameObject to be collider.|
+|**AkBDCapsuleCollider.cs**|Collider|Capsule Collider.<br>Attach to GameObject to be collider.|
+|**AkBDPlaneCollider.cs**|Collider|Infinite Plane Collider.<br>Attach to GameObject to be collider.|
+|**AkBDCollider.cs**|Base class|Base class for all colliders.|
