@@ -14,7 +14,7 @@ namespace AkBoneDynamics
         [SerializeField] private Direction m_Direction = Direction.YAxis;
         [SerializeField] private bool m_DrawGizmo = true;
         [SerializeField] private float m_GizmoSize = 1f;
-        [SerializeField] private bool m_Debug = true;
+        //[SerializeField] private bool m_Debug = true;
 
         public override (Vector3 newCenter, bool isCollide) CollisionDetection(float radius, Vector3 center)
         {
