@@ -35,13 +35,6 @@ namespace AkBoneDynamics
             var nearLength = Vector3.Dot(vecAB, (center - tipA));
             var nearPos = tipA + (vecAB * nearLength);
 
-            // debug
-            /*if (m_Debug)
-            {
-                Debug.DrawLine(tipA, center, Color.cyan, 0, true);
-                Debug.DrawLine(tipA, nearPos, Color.green, 0, true);
-            }*/
-
             // Detection
             var lengthRatio = nearLength / (tipB - tipA).magnitude;
             var isCollide = false;

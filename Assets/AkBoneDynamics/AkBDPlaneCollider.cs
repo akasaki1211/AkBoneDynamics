@@ -26,8 +26,6 @@ namespace AkBoneDynamics
             normal[(int)m_Direction] = 1f;
             normal = planeMatrix.MultiplyPoint3x4(normal);
 
-            //Plane plane = new Plane(normal, transform.position);
-            //float distanceToPoint = plane.GetDistanceToPoint(center);
             float distanceToPoint = Vector3.Dot(normal, (center - transform.position));
 
             var isCollide = false;

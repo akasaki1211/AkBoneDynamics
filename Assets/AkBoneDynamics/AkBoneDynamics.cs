@@ -1,8 +1,4 @@
-﻿/*
- * Author : Hiroyuki Akasaki <akasaki@jetstudio.co.jp>
- */
-
-//using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,9 +6,9 @@ namespace AkBoneDynamics
 {
     public class AkBoneDynamics : MonoBehaviour
     {
-        #region Sub-Class, Enum
+        #region Sub-Class
 
-        // 質点クラス
+        // Particle class
         private class Particle
         {
             // Particle Parameters
@@ -39,7 +35,7 @@ namespace AkBoneDynamics
             }
         }
 
-        // コンストレイントクラス
+        // Constraint class
         private class Constraint
         {
             public Particle m_A;
@@ -61,19 +57,12 @@ namespace AkBoneDynamics
                 float diffelence = nextDisatance - m_Distance;
                 Vector3 v = (m_A.m_NextPosition - m_B.m_NextPosition).normalized;
 
-                // A,Bの質量は同じと仮定
                 var dpA = -0.5f * diffelence * v;
                 var dpB = 0.5f * diffelence * v;
 
                 m_A.m_NextPosition += dpA * weight;
                 m_B.m_NextPosition += dpB * weight;
             }
-        }
-
-        private enum EnumUpdateMode
-        {
-            LateUpdate,
-            FixedUpdate,
         }
 
         #endregion
@@ -91,7 +80,6 @@ namespace AkBoneDynamics
         [Header("External Forces")]
         [SerializeField] private bool m_EnableExternalForce = false;
         [SerializeField] private Vector3 m_Gravity = new Vector3(0f, -9.8f, 0f);
-        //[SerializeField] private Vector3 m_Wind = Vector3.zero;
 
         [Header("Limitation")]
         [SerializeField] private bool m_EnableAngleLimit = false;
@@ -101,19 +89,16 @@ namespace AkBoneDynamics
         [SerializeField] private List<AkBDCollider> m_Colliders = null;
 
         [Header("Constraints")]
-        // Update only when not playing.
         [SerializeField] private bool m_EnableConstraints = false;
         [Range(0, 1)] [SerializeField] private float m_ConstraintStrength = 1f;
         [SerializeField] private bool m_CloseConstraints = false;
 
         [Header("Cancel Translation")]
-        // これより上階層の移動値を相殺する。
-        [SerializeField] private Transform m_TransformRoot = null;
-        
+        [SerializeField] private Transform m_TransformRoot = null; // これより上階層の移動値を相殺する。
+
         [Header("Performance")]
         [Range(0, 10)] [SerializeField] private int m_CollideIteration = 1;
         [Range(0, 10)] [SerializeField] private int m_ConstraintIteration = 1;
-        [SerializeField] private EnumUpdateMode m_UpdateMode = EnumUpdateMode.LateUpdate;
 
         [Header("Other Settings")]
         [SerializeField] private bool m_DrawGizmo = true;
@@ -124,10 +109,9 @@ namespace AkBoneDynamics
 
         #region Fields
 
-        // 質点クラスのリスト
         List<Particle> m_Particles = new List<Particle>();
         private Vector2Int m_AddressMax = Vector2Int.zero;
-        // コンストレイントクラスのリスト
+        
         List<Constraint> m_Constraints = new List<Constraint>();
 
         // 相殺する移動値のVector3
@@ -166,6 +150,20 @@ namespace AkBoneDynamics
             }
         }
 
+        // 質点の初期化
+        void InitializeParticles()
+        {
+            m_Particles.Clear();
+
+            if (m_RootBones != null)
+            {
+                for (int i = 0; i < m_RootBones.Count; i++)
+                {
+                    AddParticle(m_RootBones[i], i, 0);
+                }
+            }
+        }
+
         // 質点パラメータの更新
         void UpdateParticleParams()
         {
@@ -179,20 +177,6 @@ namespace AkBoneDynamics
                 if (m_RadiusLevel != null && m_RadiusLevel.keys.Length > 0)
                 {
                     p.m_Radius *= Mathf.Clamp01(m_RadiusLevel.Evaluate(ratio));
-                }
-            }
-        }
-
-        // 質点の初期化
-        void InitializeParticles()
-        {
-            m_Particles.Clear();
-
-            if (m_RootBones != null)
-            {
-                for (int i = 0; i < m_RootBones.Count; i++)
-                {
-                    AddParticle(m_RootBones[i], i, 0);
                 }
             }
         }
@@ -241,6 +225,7 @@ namespace AkBoneDynamics
             UpdateParticleParams();
             InitializeConstraints();
 
+            /*
             var msg = "<color=cyan>";
             msg += $"[AkBoneDynamics] \"{m_Comment}\" (";
             msg += $"Particles: {m_Particles.Count.ToString()} / ";
@@ -248,35 +233,23 @@ namespace AkBoneDynamics
             msg += $"Constraints: {m_Constraints.Count.ToString()}";
             msg += ")</color>";
             Debug.Log(msg);
+            */
         }
 
         void LateUpdate()
         {
-            if (m_UpdateMode == EnumUpdateMode.LateUpdate)
-            {
-                float dt = Time.deltaTime;
-                UpdateParticles(dt);
-            }
+            float dt = Time.deltaTime;
+            UpdateParticles(dt);
         }
 
-        void FixedUpdate()
-        {
-            if (m_UpdateMode == EnumUpdateMode.FixedUpdate)
-            {
-                float dt = Time.fixedDeltaTime;
-                UpdateParticles(dt);
-            }
-        }
 
         #endregion
 
         #region Core
 
         // axisベクトルを軸にvベクトルをangle度回転、回転後のベクトルを返す。
-        // Reference https://techblog.kayac.com/rotate-vector-in-3d
         private Vector3 RotateVectorAngle(Vector3 v, Vector3 axisNormalized, float angle)
         {
-            //var projectVector = Vector3.Dot(v, axisNormalized) * axisNormalized;
             var projectVector = Vector3.Project(v, axisNormalized);
             var vecP = v - projectVector;
             var vecQ = Vector3.Cross(axisNormalized, vecP);
@@ -304,19 +277,13 @@ namespace AkBoneDynamics
             // Core
             foreach (Particle p in m_Particles)
             {
-                // Reference:
-                // Advanced Character Physics by Thomas Jakobsen
-                //   http://www.cs.cmu.edu/afs/cs/academic/class/15462-s13/www/lec_slides/Jakobsen.pdf
-                // Position Based Dynamics by Matthias Müller, Bruno Heidelberger, Marcus Hennix, John Ratcliff
-                //   https://matthias-research.github.io/pages/publications/posBasedDyn.pdf
-
                 var parentPosition = p.m_ParentTransform.position;
 
                 // Velocity Damping
                 p.m_Velocity = p.m_Velocity * (1.0f - p.m_Damping);
 
                 // External Force
-                var externalForce = m_Gravity; // + m_Wind;
+                var externalForce = m_Gravity;
 
                 // Verlet Integration
                 p.m_NextPosition = p.m_CurrentPosition + (p.m_Velocity * dt) + (m_EnableExternalForce ? (externalForce * dt * dt) : Vector3.zero);
