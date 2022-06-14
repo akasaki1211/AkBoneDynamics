@@ -4,6 +4,8 @@
 Simple bone dynamics for easy setup.  
 This project is for learning and experimental purposes. Please note that it is not designed to be implemented as-is in games, etc. 
 
+![motion_sample.gif](.images/motion_sample.gif)  
+
 ## .Assets/AkBoneDynamics/
 |Script|Category|Description|
 |---|---|---|
@@ -13,6 +15,15 @@ This project is for learning and experimental purposes. Please note that it is n
 |**AkBDCapsuleCollider.cs**|Collider|Capsule Collider.<br>Attach to GameObject want to collider.|
 |**AkBDPlaneCollider.cs**|Collider|Infinite Plane Collider.<br>Attach to GameObject want to collider.|
 |**AkBDCollider.cs**|Base class|Base class for all colliders.|
+
+### Inspector
+![Inspector.jpg](.images/Inspector.jpg)  
+
+### Gizmos / Debug
+![edit.jpg](.images/edit.jpg)  
+
+### Supported colliders
+![colliders.jpg](.images/colliders.jpg)  
 
 ## References
 * [Advanced Character Physics by Thomas Jakobsen](http://www.cs.cmu.edu/afs/cs/academic/class/15462-s13/www/lec_slides/Jakobsen.pdf)  
