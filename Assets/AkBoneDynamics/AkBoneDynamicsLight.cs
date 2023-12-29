@@ -42,6 +42,7 @@ namespace AkBoneDynamics
 
         [Header("Bones")]
         [SerializeField] private List<Transform> m_RootBones = null;
+    [SerializeField] private List<Transform> m_ExcludeBones = null;
 
         [Range(0, 1)] [SerializeField] private float m_Damping = 0.1f;
         [Range(0, 10)] [SerializeField] private float m_Elasticity = 1f;
@@ -86,27 +87,31 @@ namespace AkBoneDynamics
         {
             j++;
 
-            if (b.childCount != 0)
+            // Itterate through all child bones
+            for (int c = 0; c < b.childCount; c++)
             {
-                var child = b.GetChild(0);
+                var child = b.GetChild(c);
 
-                var p = new Particle
+                // Only add particles to bone-chains that aren't part of our ExcludedBones list
+                if (!m_ExcludeBones.Contains(child))
                 {
-                    m_ParentTransform = b,
-                    m_ParentInitialLocalRotation = b.transform.localRotation,
+                    var p = new Particle
+                    {
+                        m_ParentTransform = b,
+                        m_ParentInitialLocalRotation = b.transform.localRotation,
 
-                    m_Address = new Vector2Int(i, j),
-                    m_Transform = child,
-                    m_InitialLocalPosition = child.transform.localPosition,
-                    m_CurrentPosition = child.transform.position,
-                    m_NextPosition = child.transform.position,
-                    m_Velocity = Vector3.zero
-                };
-                m_Particles.Add(p);
+                        m_Address = new Vector2Int(i, j),
+                        m_Transform = child,
+                        m_InitialLocalPosition = child.transform.localPosition,
+                        m_CurrentPosition = child.transform.position,
+                        m_NextPosition = child.transform.position,
+                        m_Velocity = Vector3.zero
+                    };
+                    m_Particles.Add(p);
 
-                m_AddressMax = Vector2Int.Max(m_AddressMax, p.m_Address);
-
-                AddParticle(child, i, j);
+                    m_AddressMax = Vector2Int.Max(m_AddressMax, p.m_Address);  
+                    AddParticle(child, i, j);
+                }
             }
         }
 
